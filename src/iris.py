@@ -5,7 +5,7 @@ Created on Sun Aug  2 22:28:57 2020
 @author: ricca
 """
 
-from neurons.perceptrons import PerceptronPR
+from neurons.perceptrons import PerceptronPR, PerceptronGD
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import pandas as pd
@@ -52,8 +52,8 @@ def main():
     X = dataset.iloc[0:100, [0, 2]].values
     
     # Plot data
-    plt.scatter(X[:50, 0], X[:50, 1], color="red", marker="o", label="setosa")
-    plt.scatter(X[50:100, 0], X[50:100, 1], color="blue", marker="x", label="versicolor")
+    plt.scatter(X[:49, 0], X[:49, 1], color="red", marker="o", label="setosa")
+    plt.scatter(X[49:100, 0], X[49:100, 1], color="blue", marker="x", label="versicolor")
     plt.xlabel("sepal length [cm]")
     plt.ylabel("petal length [cm]")
     plt.legend(loc="upper left")
@@ -62,31 +62,30 @@ def main():
     # Creo l'insieme di addestramento
     traning_examples = list(zip(X, y))
     perceptron = PerceptronPR(n_iter=10, learning_rate=0.1)
-    #perceptron.actfun = ActivationFunction.sigmoid 
     perceptron = perceptron.fit(traning_examples)
     
     # Otteniamo i pesi, gli errori e le iterazioni totali fatte
-    pesi = perceptron.getpesi()
     errors = perceptron.geterror()
     epochs = perceptron.getiter()
-    print(pesi, errors, epochs)
     
-    ans = input("Visualizzare gli errori totali oppure separati? [t|s] ")
-    assert ans in ["t", "s"]
+    plt.plot(range(1, epochs + 1), errors, marker='o')
     
-    # Costruiamo il plot
-    plt.xlabel("Epochs")
-    plt.ylabel("Update")
-    if ans == "t":
-        E = [sum(list(errors[x].values())) for x in errors]
-        plt.plot(range(1, epochs + 1), E, marker="o")
-    else:
-        E = {x : [] for x in errors[1]}
-        for v in errors.values():
-            for k in v.keys():
-                E[k].append(v[k])
-        for k, v in E.items():
-            plt.plot(range(1, epochs + 1), v, marker="o")
+    plt.show()
+    
+    plot_decision_region(X, y, classifier=perceptron)
+    plt.xlabel("sepal length [cm]")
+    plt.ylabel("petal length [cm]")
+    plt.legend(loc="upper left")
+    plt.show()
+    
+    perceptron = PerceptronGD(n_iter=10, learning_rate=0.0001)
+    perceptron = perceptron.fit(traning_examples)
+    
+    # Otteniamo i pesi, gli errori e le iterazioni totali fatte
+    costs = perceptron.getcosts()
+    epochs = perceptron.getiter()
+    
+    plt.plot(range(1, epochs + 1), np.log10(costs), marker='o')
     
     plt.show()
     

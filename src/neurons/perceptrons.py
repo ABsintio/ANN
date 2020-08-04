@@ -25,7 +25,7 @@ class Perceptron(object):
         return np.dot(X, self.w_[1:]) + self.w_[0]
     
     def predict(self, X):
-        return self.actfun(self.net_input(X))
+        return self
     
     def getpesi(self): 
         return self.w_
@@ -57,6 +57,9 @@ class PerceptronPR(Perceptron):
     
     def geterror(self):
         return self.error_
+    
+    def predict(self, X):
+        return self.actfun(self.net_input(X))
 
 
 class PerceptronGD(Perceptron):
@@ -76,3 +79,6 @@ class PerceptronGD(Perceptron):
     
     def getcosts(self):
         return self.costs_
+    
+    def predict(self, X):
+        return ActivationFunction.sgn(self.net_input(X))

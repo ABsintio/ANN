@@ -30,21 +30,18 @@ def perceptron_rule(traning_example, function, learning_rate=0.1, n_iter=100):
         y.append(v)
     
     X, y = np.array(X), np.array(y)
-    poss_y = set(y)
     pesi = np.zeros(X.shape[1] + 1)
-    errors = {x : 0 for x in range(1, n_iter + 1)}
-    counter = 0
+    errors = []
     
     while n_iter > 0:
-        error = {x : 0 for x in poss_y}
-        counter += 1
+        error = 0
         for x, reference in zip(X, y):
             output = function(np.dot(x, pesi[1:]) + pesi[0])
             update = learning_rate * (reference - output)
             pesi[1:] = pesi[1:] + update * x
             pesi[0] = pesi[0] + update
-            error[reference] += int(update != 0.0)
-        errors[counter] = error
+            error += int(update != 0.0)
+        errors.append(error)
         n_iter -= 1
     
     return pesi, errors
