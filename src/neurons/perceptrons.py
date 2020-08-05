@@ -8,6 +8,7 @@ Created on Sun Aug  2 21:08:00 2020
 from util.function.functions import ActivationFunction
 from util.algorithm.perceptronrule import perceptron_rule
 from util.algorithm.gradientdescent import gradient_descent
+from util.algorithm.stochasticgd import stochastic_gd
 import numpy as np
 
 class Perceptron(object):
@@ -74,6 +75,29 @@ class PerceptronGD(Perceptron):
     def fit(self, traning_example):
         self.w_, self.costs_ = gradient_descent(
                 traning_example, self.actfun,
+                self.learning_rate, self.n_iter)
+        return self
+    
+    def getcosts(self):
+        return self.costs_
+    
+    def predict(self, X):
+        return ActivationFunction.sgn(self.net_input(X))
+    
+
+class PerceptronSGD(Perceptron):
+    """Perceptron trained by Stochastic Gradient Descent"""
+    def __init__(self, learning_rate=0.01, n_iter=100, shuffle=True):
+        super().__init__(
+                learning_rate=learning_rate,
+                n_iter=n_iter,
+                actfun="linear")
+        self.costs = []
+        self.shuffle = shuffle
+    
+    def fit(self, traning_example):
+        self.w_, self.costs_ = stochastic_gd(
+                traning_example, self.actfun, self.shuffle,
                 self.learning_rate, self.n_iter)
         return self
     

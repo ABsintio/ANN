@@ -5,7 +5,7 @@ Created on Sun Aug  2 22:28:57 2020
 @author: ricca
 """
 
-from neurons.perceptrons import PerceptronPR, PerceptronGD
+from neurons.perceptrons import PerceptronPR, PerceptronGD, PerceptronSGD
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 import pandas as pd
@@ -61,6 +61,7 @@ def main():
     
     # Creo l'insieme di addestramento
     traning_examples = list(zip(X, y))
+    
     perceptron = PerceptronPR(n_iter=10, learning_rate=0.1)
     perceptron = perceptron.fit(traning_examples)
     
@@ -78,7 +79,7 @@ def main():
     plt.legend(loc="upper left")
     plt.show()
     
-    perceptron = PerceptronGD(n_iter=10, learning_rate=0.0001)
+    perceptron = PerceptronGD(n_iter=100, learning_rate=0.0001)
     perceptron = perceptron.fit(traning_examples)
     
     # Otteniamo i pesi, gli errori e le iterazioni totali fatte
@@ -86,6 +87,24 @@ def main():
     epochs = perceptron.getiter()
     
     plt.plot(range(1, epochs + 1), np.log10(costs), marker='o')
+    
+    plt.show()
+    
+    plot_decision_region(X, y, classifier=perceptron)
+    plt.xlabel("sepal length [cm]")
+    plt.ylabel("petal length [cm]")
+    plt.legend(loc="upper left")
+    plt.show()
+    
+    perceptron = PerceptronSGD(n_iter=10, learning_rate=0.0001, shuffle=True)
+    perceptron = perceptron.fit(traning_examples)
+    
+    # Otteniamo i pesi, gli errori e le iterazioni totali fatte
+    costs = perceptron.getcosts()
+    epochs = perceptron.getiter()
+    
+    #plt.plot(range(1, epochs + 1), np.log10(costs), marker='o')
+    plt.plot(range(1, epochs + 1), costs, marker='o')
     
     plt.show()
     
